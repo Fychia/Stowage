@@ -1,0 +1,249 @@
+﻿using Stowage;
+
+namespace Stowage2022
+{
+    internal class Program
+    {
+        public static async Task Main(string[] args)
+        {
+
+            //var myStorage = new MyStorage();
+
+            //await myStorage.SaveAsync(@"c:\teste.pdf");
+
+
+            //=====================================
+
+            string folder = @"D:\wetok\Projetos\Stowage";
+
+            //Utilizando o disco local
+            IFileStorage fs = Files.Of.LocalDisk(@"D:\wetok\Projetos\Stowage");
+            IFileStorage fsInMemory = Files.Of.InternalMemory(Guid.NewGuid().ToString());
+
+            using (fs)
+            {
+
+                Console.WriteLine("+---------------------------+");
+                Console.WriteLine("|         LocalDisk         |");
+                Console.WriteLine("+---------------------------+ \n\n");
+
+
+                //===============================================================
+                //Crio o arquivo e escrevo nele
+                //await fs.WriteText("README.txt", "Teste1");
+                using (var stream = await fs.OpenWrite("README.txt"))
+                {
+                    using (var sw = new StreamWriter(stream))
+                    {
+                        sw.Write("Test1");
+                        sw.Flush();
+                    }
+                }
+
+
+                //===============================================================
+                //RENAME
+                //Crio uma cópia do primeiro arquivo, inclusive com o mesmo texto
+                //await fs.Ren("README.txt", "README2.txt");
+                using (var stream = await fs.OpenRead("README.txt"))
+                {
+                    //copia
+                    using (var copy = await fs.OpenWrite("README2.txt"))
+                    {
+                        stream.CopyTo(copy);
+                    }
+                }
+                //e então exclui o antigo
+                //await fs.Rm("README.txt");
+
+
+                //===============================================================
+                //Crio arquivo para deletar
+                await fs.WriteText("README3.txt", "Teste file");
+                string fileTest = "Readme3.txt";
+                //Deletar arquivo
+                if (await fs.Exists(fileTest))
+                {
+                    await fs.Rm(fileTest);
+                }
+
+
+
+
+                //===============================================================
+                IReadOnlyCollection<IOEntry> entries = await fs.Ls(folder + "/");
+
+                // Obter os nomes dos arquivos
+                IEnumerable<string> files = entries.Select(entry => entry.Name);
+
+
+
+                //===============================================================
+                // Exibir os nomes dos arquivos no console
+                Console.WriteLine("+--------------------------------+");
+                Console.WriteLine("| Listando arquivos do diretório |" + folder);
+                Console.WriteLine("+--------------------------------+");
+
+                foreach (string file in files)
+                {
+                    Console.WriteLine("|  " + file);
+                }
+                Console.WriteLine("+--------------------------------+");
+
+
+
+                //===============================================================
+                //Lendo o arquivo
+                Console.WriteLine("+---------------------------------+");
+                Console.WriteLine("| Conteúdo do arquivo: README2.txt |");
+                Console.WriteLine("+---------------------------------+");
+
+                string content = await fs.ReadText("README2.txt");
+
+                Console.WriteLine("|  " + content);
+                Console.WriteLine("+---------------------------------+ \n");
+
+
+
+                //===============================================================
+                //Fazendo update em um arquivo
+                if (!string.IsNullOrEmpty(content))
+                {
+                    Console.WriteLine("+------------------------------------------+");
+                    Console.WriteLine("|  Update Conteúdo do arquivo: README2.txt  |");
+                    Console.WriteLine("+------------------------------------------+");
+
+                    await fs.WriteText("README2.txt", "Escreva aqui");
+                    content = await fs.ReadText("README2.txt");
+
+                    Console.WriteLine("|  " + content);
+                }
+                Console.WriteLine("+------------------------------------------+ \n");
+
+
+
+
+                Console.WriteLine("ENTER para sair...");
+                Console.ReadLine();
+            }
+
+
+            Console.WriteLine("+--------------------------------+");
+            Console.WriteLine("|         InternalMemory         |");
+            Console.WriteLine("+--------------------------------+ \n\n");
+            using (fsInMemory)
+            {
+                //Crio o arquivo e escrevo nele
+                await fsInMemory.WriteText("README4.txt", "Content");
+                //Crio uma cópia do primeiro arquivo, inclusive com o mesmo texto
+                fsInMemory.Ren("README4.txt", "README5.txt");
+
+                //await fs.OpenRead("README.txt");
+
+                await fsInMemory.WriteText("README6.txt", "Teste file");
+
+                string fileTest = "README6.txt";
+
+                //Deletar arquivo
+
+                if (await fsInMemory.Exists(fileTest))
+                {
+                    await fsInMemory.Rm(fileTest);
+                }
+
+                //Lendo o arquivo
+                Console.WriteLine("+---------------------------------+");
+                Console.WriteLine("| Conteúdo os arquivos InMemory   |");
+                Console.WriteLine("+---------------------------------+");
+                string content = await fsInMemory.ReadText("README4.txt");
+
+                string contentFile5 = await fsInMemory.ReadText("README5.txt");
+
+                string contentFile6 = await fsInMemory.ReadText("README6.txt");
+
+                Console.WriteLine("|  " + content);
+                Console.WriteLine("|  " + contentFile5);
+                Console.WriteLine("+---------------------------------+ \n");
+
+                //Mostrando que o arquivo 6 foi deletado
+                if (await fsInMemory.Exists(fileTest))
+                {
+                    Console.WriteLine(contentFile6);
+                }
+
+                else
+                {
+                    Console.WriteLine("Este arquivo não existe \n");
+                }
+
+                //Fazendo update em um arquivo
+                Console.WriteLine("+-------------------------------------------+");
+                Console.WriteLine("|  Update Conteúdo do arquivo: README4.txt  |");
+                Console.WriteLine("+-------------------------------------------+");
+                if (!string.IsNullOrEmpty(content))
+                {
+                    await fsInMemory.WriteText("README4.txt", "New Content");
+                    content = await fsInMemory.ReadText("README4.txt");
+                    Console.WriteLine("| " + content);
+                }
+                Console.WriteLine("+-------------------------------------------+\n");
+
+                IReadOnlyCollection<IOEntry> entries = await fsInMemory.Ls();
+
+                // Obter os nomes dos arquivos
+                IEnumerable<string> files = entries.Select(entry => entry.Name);
+
+                // Exibir os nomes dos arquivos no console
+                Console.WriteLine("+----------------------------+");
+                Console.WriteLine("| Listando arquivos InMemory |");
+                Console.WriteLine("+----------------------------+");
+                foreach (string file in files)
+                {
+                    Console.WriteLine("|  " + file);
+                }
+                Console.WriteLine("+----------------------------+\n");
+
+            }
+
+            //// Criar um novo documento PDF
+            //using (fs) 
+            //{
+            //    string caminhoArquivo = "D:\\wetok\\Stowage\\Arquivo.pdf";
+            //    // Criar um novo documento PDF
+            //    using (PdfWriter writer = new PdfWriter(caminhoArquivo))
+            //    {
+            //        using (iText.Kernel.Pdf.PdfDocument pdf = new iText.Kernel.Pdf.PdfDocument(writer))
+            //        {
+            //            // Criar uma nova página no documento
+            //            iText.Layout.Document document = new iText.Layout.Document(pdf);
+
+            //            // Adicionar um parágrafo ao documento
+            //            document.Add(new iText.Layout.Element.Paragraph("PDF Content Reader"));
+
+            //            Console.WriteLine(document);
+
+            //        }
+            //    }
+
+            //    using (PdfReader reader = new PdfReader(caminhoArquivo))
+            //    {
+            //        using (iText.Kernel.Pdf.PdfDocument pdf = new iText.Kernel.Pdf.PdfDocument(reader))
+            //        {
+            //            StringBuilder content = new StringBuilder();
+
+            //            // Percorra todas as páginas do documento PDF
+            //            for (int pageNumber = 1; pageNumber <= pdf.GetNumberOfPages(); pageNumber++)
+            //            {
+            //                iText.Kernel.Pdf.PdfPage page = pdf.GetPage(pageNumber);
+            //                ITextExtractionStrategy strategy = new SimpleTextExtractionStrategy();
+            //                string pageContent = PdfTextExtractor.GetTextFromPage(page, strategy);
+            //                content.AppendLine(pageContent);
+            //            }
+
+            //            Console.WriteLine(content.ToString());
+            //        }
+            //    }
+            //}
+        }
+    }
+}

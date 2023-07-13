@@ -1,0 +1,12 @@
+D:\wetok\Projetos\StowageProject\MyStowageSolution\bin\Debug\net6.0\MyStowageSolution.deps.json
+D:\wetok\Projetos\StowageProject\MyStowageSolution\bin\Debug\net6.0\MyStowageSolution.dll
+D:\wetok\Projetos\StowageProject\MyStowageSolution\bin\Debug\net6.0\MyStowageSolution.pdb
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\MyStowageSolution.csproj.AssemblyReference.cache
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\MyStowageSolution.GeneratedMSBuildEditorConfig.editorconfig
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\MyStowageSolution.AssemblyInfoInputs.cache
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\MyStowageSolution.AssemblyInfo.cs
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\MyStowageSolution.csproj.CoreCompileInputs.cache
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\MyStowageSolution.dll
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\refint\MyStowageSolution.dll
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\MyStowageSolution.pdb
+D:\wetok\Projetos\StowageProject\MyStowageSolution\obj\Debug\net6.0\ref\MyStowageSolution.dll
